@@ -1,0 +1,24 @@
+{
+  "name": "crowdloan-tools",
+  "version": "1.0.0",
+  "description": "This is a tool to help do some rewards distribution in DoraFactory's crowdloan",
+  "main": "inputContributors.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DoraFactory/crowdloan-tools.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DoraFactory/crowdloan-tools/issues"
+  },
+  "homepage": "https://github.com/DoraFactory/crowdloan-tools#readme",
+  "dependencies": {
+    "@polkadot/api": "^8.4.1",
+    "@polkadot/util": "^9.0.1",
+    "@polkadot/util-crypto": "^9.0.1"
+  }
+}

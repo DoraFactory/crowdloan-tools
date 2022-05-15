@@ -1,0 +1,25 @@
+{
+    "total_raised": "300000000000000",
+    "contributions": [
+    {
+        "account": "5DFuEcgNPjBmrJncevFzHmrNn52G5JC5aoTJPstnbRsyBRu2",
+        "contribution": "100000000000000"
+    },
+    {
+        "account": "5FsUAX4f6PaRFwG7Kgbje7ZdXgytqNHG8UfunGSFzTDSqZjc",
+        "contribution": "200000000000000"
+    },
+    {
+        "account": "5FsUAX4f6PaRFwG7Kgbje7ZdXgytqNHG8UfunGSFzTDSqZjc",
+        "contribution": "200000000000000"
+    },
+    {
+        "account": "5HjbzNULd6jF6Uq5GBN9yTpyrKCRQ8wgWgjke65kBZtzpK24",
+        "contribution": "200000000000000"
+    },
+    {
+        "account": "5DywBQ9KwFFb3Hbe5XmSeAv45uhspMxyyfvrcRkCJjLEj7dW",
+        "contribution": "200000000000000"
+    }
+    ]
+}
