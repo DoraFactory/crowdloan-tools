@@ -1,70 +1,59 @@
 import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto'
-const path = require('path');
-const fs = require('fs');
 
-// read contributor list from contributorslist.json
+import path from 'path';
+import fs from 'fs';
+const __dirname = path.resolve();
+
+// read contributor list from contributorslist.json (include 361 contriutors)
 const configpath = path.join(__dirname, './contributorlist.json');
 const configJson = fs.readFileSync(configpath, 'utf-8');
 const ctrlist = JSON.parse(configJson);
 
+// get connect with substrate network
 const wsProvider = new WsProvider('ws://127.0.0.1:8844');
 const api = await ApiPromise.create({ provider: wsProvider });
 
-const keyring = new Keyring({ type: 'sr25519' });
-const PHRASE = 'your password phrase';
+// import secret json file of sudo
+const secret_path = path.join(__dirname, './secret.json');
+const secret_json = fs.readFileSync(secret_path, 'utf-8');
+const secret = JSON.parse(secret_json);
 
-// max contributor list size is 5
-const chunk = 5;
-// utility call batch is 5
-const utilityCallChunk = 5;
+// import secret account from secret json file
+const unlockpassword = 'your password'
+const keyring = new Keyring({ type :'sr25519' } )
+const adminPair = keyring.addFromJson(secret);
+adminPair.unlock(unlockpassword);
 
-// get all the contributors info
+// numbers of contributors input once
+const chunk = 100;
+
+// start input ......
 const contributors = ctrlist.contributions;
-
-// In here we just batch the calls.
 let total_length = 0;
 let i, j, temporary;
 const rewardTxs = [];
 for (i = 0, j = contributors.length; i < j; i += chunk) {
+    // size is 100
     temporary = contributors.slice(i, i + chunk);
     let reward_vec = [];
     for (var k = 0; k < temporary.length; k++) {
-        // 
-        reward_vec.push([u8aToHex(decodeAddress(temporary[k]["account"])), temporary[k]["contribution"]])
+        let account = temporary[k]["account"];
+        let contribution = temporary[k]["contribution"];
+        console.log(account);
+        console.log(contribution);
+        // construct an array of contributor reward vec
+        reward_vec.push([u8aToHex(decodeAddress(account)), contribution]);
     }
-    // Scheduler parameters are when, periodic frequency, priority, scheduled call.
     rewardTxs.push(
-        api.tx.scheduler.schedule(args['at-block'] + rewardTxs.length, null, 0, api.tx.doraRewards.initializeContributorsList(reward_vec))
+        api.tx.sudo.sudo(api.tx.doraRewards.initializeContributorsList(reward_vec))
     )
-    total_length += temporary.length;
-}
-rewardTxs.push(api.tx.scheduler.schedule(args['at-block'] + rewardTxs.length, null, 0,
-    api.tx.doraRewards.completeInitialization(args["end-relay-block"]))
-);
 
-
-// Not all might fit in a block (either because of weight or size)
-const batchTxs = [];
-let utilityBatch;
-
-for (i = 0, j = rewardTxs.length; i < j; i += utilityCallChunk) {
-    utilityBatch = rewardTxs.slice(i, i + utilityCallChunk);
-    batchTxs.push(api.tx.utility.batchAll(utilityBatch));
-}
-
-// import your account
-const account = await keyring.addFromUri(PHRASE);
-
-let batchTx;
-for (i = 0; i < batchTxs.length; i++) {
-    // get a batch tx call
-    batchTx = batchTxs[i]
-    // construct the batch and send the transactions
+    console.log(adminPair);
     const unsub = await api.tx.utility
-        .batch(batchTx)
-        .signAndSend(account, (result) => {
+        .batch(rewardTxs)
+        .signAndSend(adminPair, (result) => {
             if (result.status.isInBlock) {
                 console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
             } else if (result.status.isFinalized) {
@@ -72,6 +61,11 @@ for (i = 0; i < batchTxs.length; i++) {
                 unsub();
             }
         });
-    await delay(30000);
+    total_length += temporary.length;
+
+    // wait some time to start next utility call
+    // await delay(30000);
 }
+
+console.log(`contributor number is${total_length}`);
 
