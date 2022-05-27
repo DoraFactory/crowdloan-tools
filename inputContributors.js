@@ -21,13 +21,13 @@ const secret_json = fs.readFileSync(secret_path, 'utf-8');
 const secret = JSON.parse(secret_json);
 
 // import secret account from secret json file
-const unlockpassword = 'your password'
+const unlockpassword = 'dora*^8612!@';
 const keyring = new Keyring({ type :'sr25519' } )
 const adminPair = keyring.addFromJson(secret);
 adminPair.unlock(unlockpassword);
 
 // numbers of contributors input once
-const chunk = 100;
+const chunk = 400;
 
 // start input ......
 const contributors = ctrlist.contributions;
@@ -52,7 +52,7 @@ for (i = 0, j = contributors.length; i < j; i += chunk) {
 
     console.log(adminPair);
     const unsub = await api.tx.utility
-        .batch(rewardTxs)
+        .batchAll(rewardTxs)
         .signAndSend(adminPair, (result) => {
             if (result.status.isInBlock) {
                 console.log(`Transaction included at blockHash ${result.status.asInBlock}`);
@@ -62,9 +62,6 @@ for (i = 0, j = contributors.length; i < j; i += chunk) {
             }
         });
     total_length += temporary.length;
-
-    // wait some time to start next utility call
-    // await delay(30000);
 }
 
 console.log(`contributor number is${total_length}`);

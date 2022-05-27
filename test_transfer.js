@@ -1,19 +1,13 @@
 import { ApiPromise, WsProvider, Keyring } from '@polkadot/api';
 import { u8aToHex } from '@polkadot/util';
 import { encodeAddress, decodeAddress } from '@polkadot/util-crypto'
-
-
 import path from 'path';
 import fs from 'fs';
-const __dirname = path.resolve();
 
 const wsProvider = new WsProvider('ws://127.0.0.1:8844');
 const api = await ApiPromise.create({ provider: wsProvider });
-// const keyring = new Keyring({ type :'sr25519' } )
 
-
-
-// read contributor list from contributorslist.json (include 361 contriutors)
+const __dirname = path.resolve();
 const configpath = path.join(__dirname, './contributorlist.json');
 const configJson = fs.readFileSync(configpath, 'utf-8');
 const ctrlist = JSON.parse(configJson);
@@ -24,12 +18,9 @@ const secret = JSON.parse(secret_json);
 
 
 const unlockpassword = 'dora*^8612!@';
-// const Key = data as unknown as KeyringPair$Json;
 const keyring = new Keyring({ type :'sr25519' } )
 const adminPair = keyring.addFromJson(secret);
-// @ts-ignore
 adminPair.unlock(unlockpassword);
-
 
 const alice = keyring.addFromUri('//Alice');
 
