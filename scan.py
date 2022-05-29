@@ -4,7 +4,7 @@
 import csv
 import json
 
-csvfile = open('../contributors/1.csv', 'r')
+csvfile = open('../contributors/all_contributors.csv', 'r')
 jsonfile = open('test.json', 'w')
 
 filedname = ("tex_id", "account", "contribution", "time")
