@@ -11,4 +11,8 @@ This is a tool to help do some rewards distribution in DoraFactory's crowdloan
 yarn install
 node inputContributor.js
 ```
-
+## 比对数据
+```shell
+pip3 install cloudscraper
+python3 fetch-compare.py
+```
